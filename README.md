@@ -1,76 +1,53 @@
-<div align="center">
+# StockWise 📦💻
 
-# Inventory Management System 📦💻
+**Inventory management system for a glove factory.**
 
-<br>
-
-<p align="center">
-
-  <h2><strong>This project is an inventory management system built for a factory.</strong></h2>
-
-</p>
-
-</div>
-
-
-<br>
-
+Software Engineering project, 2026 — ENSTA
 
 ## Description ℹ️
 
-The Inventory Management System allows users to manage products, manufacturers, and order history efficiently. It provides functionalities like adding new products, deleting existing products, viewing product details, and checking order history.
+StockWise is a Flask web application with a PostgreSQL database. It lets users log in and manage glove products, view manufacturers, and check order history.
 
-## Framework and Dependencies 🛠️
+Features:
+- User login
+- View, add and delete products
+- View manufacturers
+- View order history
 
-This project is built using the Flask framework, a lightweight WSGI web application framework in Python. It utilizes the following dependencies:
 
-- Flask
-  ```bash
-   pip install flask
-  ```
-- psycopg
-  ```bash
-  pip3 install psycopg2
-  ```
+## Team 👥
+
+- **Berraf Noha**
+- **Bakiri Soundous**
+
+Supervised by **Mme Lakhdari**.
+
+
 
 ## How to Run ▶️
 
-1. **Clone the Repository:**
+1. Clone the repository:
+   ```
+   git clone https://github.com/Berrafnoha/StockWise-Team-SE-2026.git
+   cd StockWise-Team-SE-2026
+   ```
+2. Install dependencies:
+   ```
+   pip install flask psycopg2-binary
+   ```
+3. Create a PostgreSQL database and run the SQL file in the `Database` folder.
+4. Put your database settings in `database.ini`.
+5. Start the app:
+   ```
+   python app.py
+   ```
+6. Open `http://localhost:5000` in your browser.
 
-    ```bash
-    git clone https://github.com/B3TA-BLOCKER/Inventory-Management-System.git
-    ```
 
-2. **Database Setup:**
+## Credits 🙏
 
-    - Set up a PostgreSQL database.
-  
-      - **config.py**: This file contains configurations for the project. Make sure to update it with the appropriate settings for your environment.
-
-      - **database.ini**: This file contains the database connection settings. Ensure that it is correctly configured with the details of your PostgreSQL database.
-
-      - Use the provided `database_structure.sql` file to create the required tables and schema in your database.
-
-3. **Run the Application:**
-
-    ```bash
-    python app.py
-    ```
-
-4. **Access the Application:**
-
-    Open your web browser and navigate to `http://localhost:5000` to access the application.
-
-## Note 📝
-
-Since the application is running on localhost, make sure your local server is running to access it.
-
-## Contributors 👥
-
-- **Hassaan Ali Bukhari:** `Backend development, HTML login page, CSS modifications, HTML file connections.`
-- **Ammaid:** `Database design and setup, prototype creation of the Project using Figma, data insertion.`
-- **Ahmad Naeem:** `Basic HTML page creation and Project documentation.`
+This project builds on [Inventory-Management-System](https://github.com/B3TA-BLOCKER/Inventory-Management-System) (itself a fork of [DBMS-PROJECT](https://github.com/Sheikh-Ahmed-Naeem/DBMS-PROJECT)), originally created by Hassaan Ali Bukhari, Ammaid, and Ahmad Naeem.
 
 ## License 📄
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License. See the [LICENSE](LICENSE) file for details.
