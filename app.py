@@ -65,9 +65,12 @@ def fetch_data_Gloves():
         products = []
         for row in cursor.fetchall():
             maker = {
-                'name': row[0], 
-                'unit_address': row[1],  
-                'contact_no': row[2] 
+                'id': row[0], 
+                'name': row[1],  
+                'size': row[2],
+            'material': row[3],
+            'colour': row[4],
+            'description': row[5] 
             }
             products.append(maker)
 
@@ -130,7 +133,6 @@ def product_fetch_data():
         cursor.close()
         conn.close()
         
-        print(details[0])
         return details
 
     except (Exception, psycopg2.DatabaseError) as e:
@@ -180,7 +182,6 @@ def fetch_order_history_data():
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM Gloves_Order_History ")
         result = cursor.fetchall()
-        print(result[0])
         return result
 
     except (Exception, psycopg2.DatabaseError) as e:
@@ -217,12 +218,12 @@ def save_product():
     if request.method == 'POST':
         # Retrieve form data
         product_name = request.form['product_name']
-        product_id = request.form['product_id']
-        maker = request.form['maker']
+        size = request.form['size']
+        description = request.form['description']
         material = request.form['material']
         colour = request.form['colour']
 
-        insert_product(product_name, product_id, maker, material, colour)
+        insert_product(product_name, size, material, colour, description)
 
         return redirect(url_for('gloves_products'))
 

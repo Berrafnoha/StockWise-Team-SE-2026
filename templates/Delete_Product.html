@@ -126,7 +126,7 @@ button:hover {
         <td>{{ product[2] }}</td>
         <td>
             <form action="/delete_item" method="post">
-                <input type="hidden" name="delete_item" value="{{ product.p_id }}">
+                <input type="hidden" name="delete_item" value="{{ product[0] }}">
                 <button type="submit" >Delete</button>
             </form>
         </td>
