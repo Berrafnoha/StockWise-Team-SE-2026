@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Product Details</title>
+<style>
+    /* General Styles */
+    body {
+        background-color: #e0e0e0;
+        margin: 20px;
+        font-family: Arial, sans-serif;
+    }
+    /* Table Styles */
+    table {
+        width: 100%;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    th {
+        background-color: #209cee;
+        color: white;
+        text-align: center;
+        padding: 15px;
+    }
+    td {
+        padding: 10px;
+    }
+    input[type="text"] {
+        width: calc(100% - 22px); /* Adjusted width */
+        padding: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    /* Button Styles */
+    button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #007bff; /* Hover color */
+    }
+
+    /* Footer Styles */
+    .footer {
+        text-align: center;
+        margin-top: 20px;
+        color: #888;
+    }
+</style>
+</head>
+<body>
+
+  <table>
+    <tr>
+      <th colspan="2">
+        <h1>AMBASSADOR SPORTS</h1>
+        <h3>Data Management System</h3>
+      </th>
+    </tr>
+    <tr>
+      <th colspan="2" style="font-size: 20px;">
+        Product Details
+      </th>
+    </tr>
+    <form action="/gloves/products" method="POST"> <!-- Added form element with action attribute -->
+      <tr>
+        <td>Product:</td>
+        <td><input type="text" name="product_name"></td> <!-- Added name attribute -->
+      </tr>
+      <tr>
+        <td>Product ID:</td>
+        <td><input type="text" name="product_id"></td> <!-- Added name attribute -->
+      </tr>
+      <tr>
+        <td>Maker:</td>
+        <td><input type="text" name="maker"></td> <!-- Added name attribute -->
+      </tr>
+      <tr>
+        <td>Material:</td>
+        <td><input type="text" name="material"></td> <!-- Added name attribute -->
+      </tr>
+      <tr>
+        <td>Colour:</td>
+        <td><input type="text" name="colour"></td> <!-- Added name attribute -->
+      </tr>
+      <tr>
+        <td colspan="2" style="text-align: center;">
+          <button type="submit">Save</button> <!-- Added type attribute and changed button to submit -->
+        </td>
+      </tr>
+    </form> <!-- Closing form element -->
+  </table>
+
+  <div class="footer">
+    <p>AMBASSADOR SPORTS &copy; 2024. All Rights Reserved.</p>
+  </div>
+</body>
+</html>

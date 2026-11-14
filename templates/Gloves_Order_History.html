@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Order History</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #e0e0e0;
+        margin: 20px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    table {
+        width: 100%;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ccc;
+    }
+
+    th {
+        background-color: #209cee;
+        color: white;
+    }
+
+    tr:hover {
+        background-color: #f4f4f4;
+    }
+
+    .gear-icon-container {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    .options {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        border-radius: 5px;
+        z-index: 1;
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s, opacity 0.3s linear;
+    }
+
+    .gear-icon-container:hover .options {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .options a {
+        display: block;
+        padding: 5px 0;
+        color: #333;
+        text-decoration: none;
+    }
+
+    .options a:hover {
+        background-color: #f4f4f4;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 20px;
+        color: #888;
+    }
+        .table {
+        float: right;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="gear-icon-container">
+        <img src="threedot.jpg" alt="Settings" style="width: 50px; height: 50px;">
+        <div class="options">
+            <a href="#" class="add-option">Add</a>
+            <a href="delete_order_history.html" class="delete-option">Delete</a>
+        </div>
+    </div>
+
+    <table>
+        <tr>
+            <th colspan="7">
+                <h1 style="margin: 0; text-align: center;">AMBASSADOR SPORTS</h1>
+                <h3 style="margin: 5px 0 0; font-size: 16px; text-align: center;">Order History</h3>
+            </th>
+        </tr>
+<tr>
+    <th>Maker ID</th>
+    <th>Product ID</th>
+    <th>Quantity</th>
+    <th>Product Delivered</th>
+    <th>Product Pending</th>
+    <th>Price Per Item</th>
+    <th>Total Price</th>
+</tr>
+{% for product in data %}
+
+  <tr>
+    <td>{{ product [0]}}</td>
+    <td>{{ product[1] }}</td>
+    <td>{{ product[2] }}</td>
+    <td>{{ product[3] }}</td>
+    <td>{{ product[4] }}</td>
+    <td>{{ product[5] }}</td>
+    <td>{{ product[6] }}</td>
+  </tr>
+{% endfor %}
+    </table>
+
+    <div class="footer">
+        <p>&copy; 2024 AMBASSADOR SPORTS. All Rights Reserved.</p>
+    </div>
+</div>
+</body>
+</html>
