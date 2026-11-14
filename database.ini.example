@@ -2,5 +2,5 @@
 host=localhost
 database=stockwise
 user=postgres
-password=1234
+password=YOUR_PASSWORD
 port=5432
