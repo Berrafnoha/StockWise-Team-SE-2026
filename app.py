@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, abort
+from flask import Flask, render_template, request, redirect, url_for, abort, session
+from werkzeug.security import check_password_hash
 import psycopg2
 from config import config
 
 app = Flask(__name__)
+app.secret_key = "stockwise-change-this-secret"
 
 # Product lines: URL name -> display name.
 # Each line needs 3 tables: <line>, <line>_maker, <line>_order_history
@@ -32,13 +34,11 @@ def run(sql, params=(), fetch=False):
 
 def check_credentials(username, password):
     try:
-        rows = run("SELECT 1 FROM users WHERE u_name = %s AND u_password = %s",
-                   (username, password), fetch=True)
-        return len(rows) > 0
+        rows = run("SELECT u_password FROM users WHERE u_name = %s", (username,), fetch=True)
+        return len(rows) > 0 and check_password_hash(rows[0][0], password)
     except Exception as e:
         print("Login error:", e)
         return False
-
 
 # ---------- Login and home ----------
 @app.route("/")
@@ -49,13 +49,28 @@ def application():
 @app.route("/Home_Page", methods=["POST"])
 def button_click():
     if check_credentials(request.form["u"], request.form["p"]):
-        return render_template("index.html", lines=LINES)
+        session["user"] = request.form["u"]
+        return redirect(url_for("home"))
     return "Invalid credentials.", 400
 
 
 @app.route("/home")
 def home():
     return render_template("index.html", lines=LINES)
+
+
+@app.before_request
+def require_login():
+    if request.endpoint in ("application", "button_click", "static"):
+        return
+    if "user" not in session:
+        return redirect(url_for("application"))
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("application"))
 
 
 # ---------- Products ----------
