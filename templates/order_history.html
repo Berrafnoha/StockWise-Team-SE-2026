@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <h2 style="color:#007bff">{{ label }} - Order History</h2>
-<div class="toolbar"><input type="text" id="search" placeholder="Search"></div>
+<div class="toolbar"><input type="text" id="search" placeholder="Search"><a class="btn" href="/{{ line }}/order_history/add">New order</a></div>
 <table>
   <tr><th>Product</th><th>Maker</th><th>Quantity</th><th>Delivered</th><th>Pending</th><th>Price per item</th><th>Total price</th></tr>
   {% for o in orders %}

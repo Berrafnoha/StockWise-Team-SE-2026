@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <h2 style="color:#007bff">{{ label }} - Makers</h2>
-<div class="toolbar"><input type="text" id="search" placeholder="Search"></div>
+<div class="toolbar"><input type="text" id="search" placeholder="Search"><a class="btn" href="/{{ line }}/makers/add">Add maker</a></div>
 <table>
   <tr><th>ID</th><th>Maker Name</th><th>Address</th><th>Contact No</th></tr>
   {% for m in makers %}

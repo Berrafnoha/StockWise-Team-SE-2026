@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 style="color:#007bff">{{ label }} - New order</h2>
+{% if error %}<div class="error">{{ error }}</div>{% endif %}
+{% if not products or not makers %}
+  <div class="error">You need at least one product and one maker before creating an order.</div>
+{% else %}
+<form method="post">
+  <table>
+    <tr><td>Product:</td><td>
+      <select name="p_id" required>{% for p in products %}<option value="{{ p[0] }}">{{ p[1] }}</option>{% endfor %}</select>
+    </td></tr>
+    <tr><td>Maker:</td><td>
+      <select name="m_id" required>{% for m in makers %}<option value="{{ m[0] }}">{{ m[1] }}</option>{% endfor %}</select>
+    </td></tr>
+    <tr><td>Total quantity:</td><td><input type="text" name="total_quantity" required></td></tr>
+    <tr><td>Quantity delivered:</td><td><input type="text" name="quantity_delivered" value="0" required></td></tr>
+    <tr><td>Price per item:</td><td><input type="text" name="price_per_item" required></td></tr>
+  </table>
+  <p><button class="btn" type="submit">Save order</button> <a href="/{{ line }}/order_history">Cancel</a></p>
+</form>
+{% endif %}
+{% endblock %}

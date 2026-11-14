@@ -116,5 +116,49 @@ def order_history(line):
     return render_template("order_history.html", line=line, label=LINES[line], orders=rows)
 
 
+
+
+# ---------- Add maker ----------
+@app.route("/<line>/makers/add", methods=["GET", "POST"])
+def add_maker(line):
+    check_line(line)
+    if request.method == "POST":
+        f = request.form
+        run(f"INSERT INTO {line}_maker (m_name, address, cnic, contact_no) "
+            f"VALUES (%s, %s, %s, %s)",
+            (f["m_name"], f["address"], f["cnic"], f["contact_no"]))
+        return redirect(url_for("makers", line=line))
+    return render_template("add_maker.html", line=line, label=LINES[line])
+
+
+# ---------- New order ----------
+@app.route("/<line>/order_history/add", methods=["GET", "POST"])
+def add_order(line):
+    check_line(line)
+    error = None
+    if request.method == "POST":
+        f = request.form
+        try:
+            qty = int(f["total_quantity"])
+            delivered = int(f["quantity_delivered"])
+            price = float(f["price_per_item"])
+            if qty < 0 or delivered < 0 or price < 0:
+                error = "Values cannot be negative."
+            elif delivered > qty:
+                error = "Delivered quantity cannot be greater than the total quantity."
+            else:
+                run(f"INSERT INTO {line}_order_history "
+                    f"(p_id, m_id, total_quantity, quantity_delivered, price_per_item) "
+                    f"VALUES (%s, %s, %s, %s, %s)",
+                    (f["p_id"], f["m_id"], qty, delivered, price))
+                return redirect(url_for("order_history", line=line))
+        except ValueError:
+            error = "Quantity and price must be numbers."
+    products = run(f"SELECT p_id, p_name FROM {line} ORDER BY p_name", fetch=True)
+    makers = run(f"SELECT m_id, m_name FROM {line}_maker ORDER BY m_name", fetch=True)
+    return render_template("add_order.html", line=line, label=LINES[line],
+                           products=products, makers=makers, error=error)
+
+
 if __name__ == "__main__":
     app.run(debug=True)

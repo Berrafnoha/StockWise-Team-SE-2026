@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 style="color:#007bff">{{ label }} - Add a maker</h2>
+<form method="post">
+  <table>
+    <tr><td>Maker name:</td><td><input type="text" name="m_name" required></td></tr>
+    <tr><td>Address:</td><td><input type="text" name="address"></td></tr>
+    <tr><td>ID number:</td><td><input type="text" name="cnic" maxlength="15"></td></tr>
+    <tr><td>Contact no:</td><td><input type="text" name="contact_no" maxlength="15"></td></tr>
+  </table>
+  <p><button class="btn" type="submit">Save</button> <a href="/{{ line }}/makers">Cancel</a></p>
+</form>
+{% endblock %}
