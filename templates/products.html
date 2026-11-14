@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 style="color:#007bff">{{ label }} - Products</h2>
+<div class="toolbar">
+  <input type="text" id="search" placeholder="Search">
+  <a class="btn" href="/{{ line }}/products/add">Add</a>
+  <a class="btn btn-danger" href="/{{ line }}/products/delete">Delete</a>
+</div>
+<table>
+  <tr><th>ID</th><th>Name</th><th>Size</th><th>Material</th><th>Colour</th><th>Description</th></tr>
+  {% for p in products %}
+  <tr class="row"><td>{{ p[0] }}</td><td>{{ p[1] }}</td><td>{{ p[2] }}</td><td>{{ p[3] }}</td><td>{{ p[4] }}</td><td>{{ p[5] }}</td></tr>
+  {% else %}
+  <tr><td colspan="6">No products yet.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

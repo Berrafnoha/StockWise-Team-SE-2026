@@ -1,262 +1,120 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, abort
 import psycopg2
 from config import config
 
 app = Flask(__name__)
 
+# Product lines: URL name -> display name.
+# Each line needs 3 tables: <line>, <line>_maker, <line>_order_history
+LINES = {
+    "gloves": "Gloves",
+    "jerseys": "Jerseys",
+    "balls": "Balls",
+}
 
-def connect():
-    connection = None
+
+def check_line(line):
+    if line not in LINES:
+        abort(404)
+
+
+def run(sql, params=(), fetch=False):
+    """Run one SQL statement. Commits on success, rolls back on error."""
+    conn = psycopg2.connect(**config())
     try:
-        params = config()
-        connection = psycopg2.connect(**params)
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, params)
+                return cur.fetchall() if fetch else None
     finally:
-        if connection is not None:
-            connection.close()
-
-
-# routing the application
-@app.route("/")
-def application():
-    return render_template('login.html')
+        conn.close()
 
 
 def check_credentials(username, password):
     try:
-        # Get database connection settings from database.ini
-        params = config()
-
-        # Connect to the database
-        conn = psycopg2.connect(**params)
-
-        cursor = conn.cursor()
-
-        # Query the database to check if the credentials are valid
-        cursor.execute("SELECT * FROM users WHERE  u_name = %s AND  u_password = %s", (username, password))
-        user = cursor.fetchone()
-
-        # Close database connection
-        cursor.close()
-        conn.close()
-
-        return user is not None  # Return True if user exists, False otherwise
-
-    except (Exception, psycopg2.DatabaseError) as e:
-        print("Error connecting to the database:", e)
+        rows = run("SELECT 1 FROM users WHERE u_name = %s AND u_password = %s",
+                   (username, password), fetch=True)
+        return len(rows) > 0
+    except Exception as e:
+        print("Login error:", e)
         return False
 
 
-def fetch_data_Gloves():
-    try:
-        # Get database connection settings from database.ini
-        params = config()
-
-        # Connect to the database
-        conn = psycopg2.connect(**params)
-
-        cursor = conn.cursor()
-
-        # Query the database to fetch all rows from the Gloves_Maker table
-        cursor.execute("SELECT * FROM Gloves")
-
-        # Fetch all rows and store them in a list of dictionaries
-        products = []
-        for row in cursor.fetchall():
-            maker = {
-                'id': row[0], 
-                'name': row[1],  
-                'size': row[2],
-            'material': row[3],
-            'colour': row[4],
-            'description': row[5] 
-            }
-            products.append(maker)
-
-        # Close database connection
-        cursor.close()
-        conn.close()
-
-        return products
-
-    except (Exception, psycopg2.DatabaseError) as e:
-        print("Error connecting to the database:", e)
-        return None
+# ---------- Login and home ----------
+@app.route("/")
+def application():
+    return render_template("login.html")
 
 
-def fetch_data():
-    try:
-        # Get database connection settings from database.ini
-        params = config()
-
-        # Connect to the database
-        conn = psycopg2.connect(**params)
-
-        cursor = conn.cursor()
-
-        # Query the database to fetch all rows from the Gloves_Maker table
-        cursor.execute("SELECT * FROM Gloves_Maker")
-        makers = []
-        for row in cursor.fetchall():
-            maker = {
-                'name': row[1], 
-                'unit_address': row[2],  
-                'contact_no': row[4]  
-            }
-            makers.append(maker)
-
-        # Close database connection
-        cursor.close()
-        conn.close()
-
-        return makers
-
-    except (Exception, psycopg2.DatabaseError) as e:
-        print("Error connecting to the database:", e)
-        return None
-
-
-def product_fetch_data():
-    try:
-        # Get database connection settings from database.ini
-        params = config()
-
-        # Connect to the database
-        conn = psycopg2.connect(**params)
-
-        cursor = conn.cursor()
-
-        # Query the database to fetch all rows from the Gloves_Maker table
-        cursor.execute("SELECT * FROM Gloves")
-        details = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        
-        return details
-
-    except (Exception, psycopg2.DatabaseError) as e:
-        print("Error connecting to the database:", e)
-        return None
-
-
-def insert_product(product_name, size, material, colour, description):
-    try:
-        params = config()
-        conn = psycopg2.connect(**params)
-
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO Gloves (P_name, Size, Material, Colour, Description) VALUES (%s, %s, %s, %s, %s)",
-                       (product_name, size, material, colour, description))
-        conn.commit()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        cursor.close()
-        conn.close()
-
-
-# Function to delete an item from the database
-def delete_item_from_database(item_id):
-    try:
-        params = config()
-        conn = psycopg2.connect(**params)
-
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM Gloves WHERE P_ID = %s", (item_id,))
-        conn.commit()
-
-    except (Exception, psycopg2.DatabaseError) as e:
-        print("Error deleting item from the database:", e)
-    finally:
-        cursor.close()
-        conn.close()
-
-
-def fetch_order_history_data():
-    try:
-        # Get database connection settings from database.ini
-        params = config()
-        # Connect to the database
-        conn = psycopg2.connect(**params)
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM Gloves_Order_History ")
-        result = cursor.fetchall()
-        return result
-
-    except (Exception, psycopg2.DatabaseError) as e:
-        print("Error deleting item from the database:", e)
-    finally:
-        cursor.close()
-        conn.close()
-
-
-@app.route('/Home_Page', methods=['POST'])
+@app.route("/Home_Page", methods=["POST"])
 def button_click():
-    username = request.form['u']
-    password = request.form['p']
-
-    if check_credentials(username, password):
-        return render_template('index.html')
-    else:
-        return "Invalid credentials.", 400
+    if check_credentials(request.form["u"], request.form["p"]):
+        return render_template("index.html", lines=LINES)
+    return "Invalid credentials.", 400
 
 
-@app.route('/gloves/products')
-def gloves_products():
-    data = fetch_data_Gloves()
-    return render_template('Gloves_product_window.html', products=data)
+@app.route("/home")
+def home():
+    return render_template("index.html", lines=LINES)
 
 
-@app.route('/Add_Product.html')
-def add_product():
-    return render_template('Add_Product.html')
+# ---------- Products ----------
+@app.route("/<line>/products")
+def products(line):
+    check_line(line)
+    rows = run(f"SELECT p_id, p_name, size, material, colour, description "
+               f"FROM {line} ORDER BY p_id", fetch=True)
+    return render_template("products.html", line=line, label=LINES[line], products=rows)
 
 
-@app.route('/gloves/products', methods=['POST'])
-def save_product():
-    if request.method == 'POST':
-        # Retrieve form data
-        product_name = request.form['product_name']
-        size = request.form['size']
-        description = request.form['description']
-        material = request.form['material']
-        colour = request.form['colour']
-
-        insert_product(product_name, size, material, colour, description)
-
-        return redirect(url_for('gloves_products'))
+@app.route("/<line>/products/add", methods=["GET", "POST"])
+def add_product(line):
+    check_line(line)
+    if request.method == "POST":
+        f = request.form
+        run(f"INSERT INTO {line} (p_name, size, material, colour, description) "
+            f"VALUES (%s, %s, %s, %s, %s)",
+            (f["product_name"], f["size"], f["material"], f["colour"], f["description"]))
+        return redirect(url_for("products", line=line))
+    return render_template("add_product.html", line=line, label=LINES[line])
 
 
-@app.route('/Delete_Product.html')
-def delete_product():
-    data = product_fetch_data()
-    return render_template('Delete_Product.html', Gloves=data)
+@app.route("/<line>/products/delete", methods=["GET", "POST"])
+def delete_product(line):
+    check_line(line)
+    error = None
+    if request.method == "POST":
+        try:
+            run(f"DELETE FROM {line} WHERE p_id = %s", (request.form["delete_item"],))
+            return redirect(url_for("products", line=line))
+        except psycopg2.Error:
+            error = "Cannot delete this product: it is used in the order history."
+    rows = run(f"SELECT p_id, p_name, size FROM {line} ORDER BY p_id", fetch=True)
+    return render_template("delete_product.html", line=line, label=LINES[line],
+                           products=rows, error=error)
 
 
-@app.route('/delete_item', methods=['POST','GET'])
-def delete_item():
-    if request.method == 'POST':
-        item_id = request.form['delete_item']
-        print(item_id)
-        delete_item_from_database(item_id)  # Call the function to delete the item from the database
-        return redirect(url_for('gloves_products'))  # Redirect to the Gloves_product_window.html page
+# ---------- Makers ----------
+@app.route("/<line>/makers")
+def makers(line):
+    check_line(line)
+    rows = run(f"SELECT m_id, m_name, address, contact_no FROM {line}_maker ORDER BY m_id",
+               fetch=True)
+    return render_template("makers.html", line=line, label=LINES[line], makers=rows)
 
 
-@app.route('/gloves/makers')
-def gloves_makers():
-    data = fetch_data()
-    return render_template('Gloves_maker_window.html', makers=data)
-
-
-@app.route('/order_history', methods = ['GET', 'POST'])
-def order_history():
-    data = fetch_order_history_data()
-    print(data)# Function to fetch data from the Gloves_Order_History table
-    return render_template('Gloves_Order_History.html', data=data)
-
+# ---------- Order history ----------
+@app.route("/<line>/order_history")
+def order_history(line):
+    check_line(line)
+    rows = run(
+        f"SELECT p.p_name, m.m_name, o.total_quantity, o.quantity_delivered, "
+        f"o.quantity_pending, o.price_per_item, o.total_price "
+        f"FROM {line}_order_history o "
+        f"LEFT JOIN {line} p ON p.p_id = o.p_id "
+        f"LEFT JOIN {line}_maker m ON m.m_id = o.m_id", fetch=True)
+    return render_template("order_history.html", line=line, label=LINES[line], orders=rows)
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
-    connect()
+    app.run(debug=True)

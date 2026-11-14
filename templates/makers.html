@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 style="color:#007bff">{{ label }} - Makers</h2>
+<div class="toolbar"><input type="text" id="search" placeholder="Search"></div>
+<table>
+  <tr><th>ID</th><th>Maker Name</th><th>Address</th><th>Contact No</th></tr>
+  {% for m in makers %}
+  <tr class="row"><td>{{ m[0] }}</td><td>{{ m[1] }}</td><td>{{ m[2] }}</td><td>{{ m[3] }}</td></tr>
+  {% else %}
+  <tr><td colspan="4">No makers yet.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}
